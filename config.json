@@ -1,0 +1,1394 @@
+{
+  "emoji_logo": "<:GreeksLogo:1505682080330420244>",
+  "channels": {
+    "verification": null,
+    "tickets": null,
+    "tickets_logs": 1551787880916058232,
+    "applications": null,
+    "applications_review_console": 1518779604981256303,
+    "applications_review_pc": 1505686852416442428,
+    "team_status": 1494901287668547745,
+    "invite_leaderboard": 1508590288476704939,
+    "logs": null,
+    "vipid_autoreply": 1487625194397892679,
+    "giveaway": null,
+    "welcome": 1487614163143360622,
+    "temp_voice_lobby": null,
+    "temp_voice_category": null,
+    "logs_message_delete": 1552277964991889469,
+    "logs_message_edit": 1552277964991889469,
+    "logs_member_join": 1552278230243999834,
+    "logs_member_leave": 1552278230243999834,
+    "logs_moderation": 1552278348405809304,
+    "logs_voice": 1552278401161895976,
+    "logs_role": 1552278468992172052,
+    "logs_channel": 1552278519839723580,
+    "logs_invite": 1552278929052541009,
+    "announcement": 1542179443697786933,
+    "rules": 1476936340758073518,
+    "logs_nickname": 1552357239078002830,
+    "logs_avatar": 1552357160078417940,
+    "social_tiktok": 1487616461185749024,
+    "social_youtube": 1518281448921104444,
+    "bot_status": 1551764735366668399,
+    "duty_leaderboard": 1516631346057969804,
+    "application_logs": 1487614163143360622,
+    "tickets_transcript": 1551787880916058232,
+    "ticket_logs": 1551787880916058232,
+    "transcript": 1555294757419487303,
+    "category": 1487610517471100998,
+    "verification_logs": 1555492527673581588,
+    "logs_server": 1556717465940004934,
+    "logs_thread": null,
+    "afk_channel": 1487626497060638801
+  },
+  "roles": {
+    "naked": 1488296219137671269,
+    "console_member": 1537943175170363503,
+    "pc_member": 1551413916477820969,
+    "staff": 1487882470761431142,
+    "greeks_core": null,
+    "team_status_role": 1487612021452177529,
+    "welcome_role": null,
+    "allowed_command_roles": [
+      1487610846967365702
+    ],
+    "ticket_roles": [
+      1552167338705555526,
+      1557066253531611216,
+      1557066632524726314
+    ],
+    "verification_role": 1488296219137671269,
+    "trial_role": 1537943175170363503,
+    "team_role": 1487612021452177529,
+    "rules_allowed_roles": [
+      1536964412236369970,
+      1519872479747899563,
+      1489416224118013993
+    ],
+    "afk_role": 1561899737211338882
+  },
+  "settings": {
+    "vipid_trigger_enabled": true,
+    "welcome_image_url": "https://cdn.discordapp.com/attachments/1234567890/greeks.png",
+    "temp_voice_enabled": true,
+    "tempvoice": {
+      "lobbies": [
+        {
+          "lobby_id": 1487616260371120289,
+          "category_id": null,
+          "name_template": "console interview"
+        },
+        {
+          "lobby_id": 1492285076577321073,
+          "category_id": null,
+          "name_template": "pc interview"
+        }
+      ],
+      "lobby_id": 1487616260371120289,
+      "name_template": "console interview",
+      "temp_channels": []
+    },
+    "duty": {
+      "required_role": 1487612021452177529,
+      "on_role": 1516600298632642712,
+      "off_role": 1516600356857974905,
+      "voice_channels": [
+        1487625455438659647,
+        1487625471658033212,
+        1487625484329025676,
+        1487626392622338048
+      ]
+    },
+    "invite_show_count": true,
+    "applications": {
+      "interview_category": 1555105574734012486
+    },
+    "tickets": {
+      "category_id": 1487610517471100998,
+      "panel_channel_id": 1552278230243999834,
+      "panel_message_id": 1555293828569759757
+    }
+  },
+  "guild_id": 1472206730862526646,
+  "invite_counts": {
+    "1119631605535867021": 5,
+    "1419202066316005476": 5,
+    "1387103254537572453": 1,
+    "1531396267320541333": 1
+  },
+  "social_accounts": {
+    "tiktok": [
+      "vandal.rce"
+    ],
+    "youtube": []
+  },
+  "last_videos": {
+    "tiktok": {},
+    "youtube": {}
+  },
+  "duty_times": {
+    "1419202066316005476": 164841,
+    "1512870270249996440": 15569,
+    "1531396267320541333": 80200,
+    "814860710555025478": 51181,
+    "1330842918189006850": 91391,
+    "1370062875103854683": 17605,
+    "899711382457569331": 41484,
+    "1387103254537572453": 21337,
+    "1484639470492975287": 15233,
+    "861206218789355521": 13759,
+    "1471135639360504049": 26544,
+    "1539659259287969876": 1739,
+    "1382030973037969545": 864,
+    "1385417615148847120": 6603,
+    "1421137132147179530": 496,
+    "473925508501995534": 5342,
+    "959795980750950500": 32374,
+    "903994941301202974": 75,
+    "1393302493282308140": 578,
+    "1400656024360321024": 1157
+  },
+  "polls": {
+    "1554454535383023636": {
+      "question": "adsads",
+      "options": [
+        "2",
+        "2"
+      ],
+      "votes": [
+        0,
+        1
+      ],
+      "voters": {
+        "1419202066316005476": 1
+      },
+      "channel_id": 1476936341420769474,
+      "message_id": 1554454537748750373,
+      "created_by": 1419202066316005476,
+      "created_at": "2026-09-29T11:27:22.026620"
+    },
+    "1554850707197136916": {
+      "question": "211212",
+      "options": [
+        "12121212",
+        "121212"
+      ],
+      "votes": [
+        0,
+        1
+      ],
+      "voters": {
+        "1419202066316005476": 1
+      },
+      "channel_id": 1476936341420769474,
+      "message_id": 1554850710389137479,
+      "created_by": 1419202066316005476,
+      "created_at": "2026-09-30T13:41:36.902130"
+    },
+    "1555092877632077874": {
+      "question": "7222",
+      "options": [
+        "2222322",
+        "332"
+      ],
+      "votes": [
+        0,
+        0
+      ],
+      "voters": {},
+      "channel_id": 1543634034414854246,
+      "message_id": 1555092880069103648,
+      "created_by": 1419202066316005476,
+      "created_at": "2026-10-01T05:43:54.659200"
+    },
+    "1555180462199279736": {
+      "question": "good at pvp with no clips",
+      "options": [
+        "accept him",
+        "trials",
+        "deny"
+      ],
+      "votes": [
+        0,
+        0,
+        0
+      ],
+      "voters": {},
+      "channel_id": 1554190274790686862,
+      "message_id": null,
+      "created_by": 1419202066316005476,
+      "created_at": "2026-10-01T11:31:56.465193+00:00",
+      "end_time": "2026-10-02T10:51:56.465010+00:00",
+      "ended": true
+    },
+    "1555182756172926996": {
+      "question": "21",
+      "options": [
+        "22",
+        "222"
+      ],
+      "votes": [
+        0,
+        0
+      ],
+      "voters": {},
+      "channel_id": 1476936341420769474,
+      "message_id": 1555182759134240769,
+      "created_by": 1419202066316005476,
+      "created_at": "2026-10-01T11:41:03.370300+00:00",
+      "end_time": "2026-10-01T15:23:03.369966+00:00",
+      "ended": true
+    }
+  },
+  "giveaways": {
+    "1554454734486638702": {
+      "prize": "22",
+      "winners": 2,
+      "end_time": "2026-09-29T11:30:09.465620",
+      "channel_id": 1476936341420769474,
+      "message_id": 1554454736596504599,
+      "entries": [],
+      "require_tag": false,
+      "tag_text": null,
+      "hosted_by": 1419202066316005476,
+      "ended": true,
+      "winners_list": []
+    },
+    "1554850922222452746": {
+      "prize": "22",
+      "winners": 1,
+      "end_time": "2026-09-30T13:44:28.032859",
+      "channel_id": 1476936341420769474,
+      "message_id": 1554850925049290924,
+      "entries": [
+        1419202066316005476
+      ],
+      "require_tag": false,
+      "tag_text": null,
+      "hosted_by": 1419202066316005476,
+      "ended": true,
+      "winners_list": [
+        1419202066316005476
+      ]
+    },
+    "1555163785746976819": {
+      "prize": "222",
+      "winners": 2,
+      "end_time": "2026-10-01T10:35:40.462224",
+      "channel_id": 1476936341420769474,
+      "message_id": 1555163788188057612,
+      "entries": [],
+      "require_tag": false,
+      "tag_text": null,
+      "hosted_by": 1419202066316005476,
+      "ended": true,
+      "winners_list": []
+    },
+    "1555164769084903526": {
+      "prize": "22",
+      "winners": 2,
+      "end_time": "2026-10-01T10:49:35.053836+00:00",
+      "channel_id": 1476936341420769474,
+      "message_id": 1555164772042018932,
+      "entries": [
+        1419202066316005476
+      ],
+      "require_tag": false,
+      "tag_text": null,
+      "hosted_by": 1419202066316005476,
+      "ended": true,
+      "winners_list": [
+        1419202066316005476
+      ]
+    },
+    "1561864391798820864": {
+      "prize": "3 mp5 hazzy start",
+      "winners": 1,
+      "end_time": "2026-10-20T23:11:29.901727+00:00",
+      "channel_id": 1488269673882714132,
+      "message_id": null,
+      "entries": [],
+      "require_tag": false,
+      "tag_text": null,
+      "requirements": null,
+      "hosted_by": 1419202066316005476,
+      "ended": true,
+      "winners_list": []
+    },
+    "1561865679169392781": {
+      "prize": "3 mp5 kits to one team of official",
+      "winners": 1,
+      "end_time": "2026-10-20T23:16:36.650285+00:00",
+      "channel_id": 1488269673882714132,
+      "message_id": null,
+      "entries": [],
+      "require_tag": false,
+      "tag_text": null,
+      "requirements": null,
+      "hosted_by": 1419202066316005476,
+      "ended": true,
+      "winners_list": []
+    },
+    "1561866500921495643": {
+      "prize": "3mp5 kits for one team on most queued official",
+      "winners": 1,
+      "end_time": "2026-10-20T23:19:52.330919+00:00",
+      "channel_id": 1488269673882714132,
+      "message_id": 1561866504251768875,
+      "entries": [
+        1419202066316005476
+      ],
+      "require_tag": false,
+      "tag_text": null,
+      "requirements": null,
+      "hosted_by": 1419202066316005476,
+      "ended": true,
+      "winners_list": [
+        1419202066316005476
+      ]
+    },
+    "1561866837879291924": {
+      "prize": "222",
+      "winners": 2222,
+      "end_time": "2026-10-20T02:03:12.775002+00:00",
+      "channel_id": 1555996753520492544,
+      "message_id": 1561866841234612225,
+      "entries": [
+        1419202066316005476
+      ],
+      "require_tag": false,
+      "tag_text": null,
+      "requirements": null,
+      "hosted_by": 1419202066316005476,
+      "ended": false
+    },
+    "1561867712089690212": {
+      "prize": "22",
+      "winners": 22,
+      "end_time": "2026-10-19T22:46:41.312157+00:00",
+      "channel_id": 1552278230243999834,
+      "message_id": 1561867716258824263,
+      "entries": [],
+      "require_tag": false,
+      "tag_text": null,
+      "requirements": null,
+      "hosted_by": 1419202066316005476,
+      "ended": true,
+      "winners_list": []
+    },
+    "1562091694277529763": {
+      "prize": "3 mp5 kits to one lucky team",
+      "winners": 1,
+      "end_time": "2026-10-21T14:14:42.737640+00:00",
+      "channel_id": 1488269673882714132,
+      "message_id": null,
+      "entries": [],
+      "require_tag": false,
+      "tag_text": null,
+      "requirements": null,
+      "hosted_by": 1419202066316005476,
+      "ended": true,
+      "winners_list": []
+    },
+    "1562097680438530190": {
+      "prize": "22",
+      "winners": 2,
+      "end_time": "2026-10-20T14:00:29.529954+00:00",
+      "channel_id": 1476936341420769474,
+      "message_id": 1562097683512950867,
+      "entries": [
+        1419202066316005476
+      ],
+      "require_tag": false,
+      "tag_text": null,
+      "requirements": null,
+      "hosted_by": 1419202066316005476,
+      "ended": true,
+      "winners_list": [
+        1419202066316005476
+      ]
+    }
+  },
+  "activity_tests": {
+    "1555123168450969663": {
+      "question": "adsdsadada",
+      "wipe_time": "nigger",
+      "end_time": "2026-10-01T07:54:16.581305",
+      "channel_id": 1476936341420769474,
+      "message_id": null,
+      "votes": {
+        "on_time": [],
+        "later": [],
+        "no": []
+      },
+      "created_by": 1419202066316005476,
+      "ended": true
+    },
+    "1555127868130992200": {
+      "question": "sdadadadadaadd",
+      "wipe_time": "riger",
+      "end_time": "2026-10-01T09:42:57.116608",
+      "channel_id": 1476936341420769474,
+      "message_id": 1555127871394025496,
+      "votes": {
+        "on_time": [],
+        "later": [],
+        "no": [
+          1419202066316005476
+        ]
+      },
+      "created_by": 1419202066316005476,
+      "ended": true
+    },
+    "1555129565498576906": {
+      "question": "2312313",
+      "wipe_time": "222222",
+      "end_time": "2026-10-01T08:29:41.735603",
+      "channel_id": 1476936341420769474,
+      "message_id": 1555129568443109468,
+      "votes": {
+        "on_time": [],
+        "later": [
+          1419202066316005476
+        ],
+        "no": []
+      },
+      "created_by": 1419202066316005476,
+      "ended": true
+    },
+    "1555156925015138345": {
+      "question": "dadadadad",
+      "wipe_time": "22",
+      "end_time": "2026-10-01T10:18:24.745427",
+      "channel_id": 1476936341420769474,
+      "message_id": 1555156927607083029,
+      "votes": {
+        "on_time": [],
+        "later": [
+          1419202066316005476
+        ],
+        "no": []
+      },
+      "created_by": 1419202066316005476,
+      "ended": true
+    },
+    "1555160270031167549": {
+      "question": "2121",
+      "wipe_time": "dadadadaw",
+      "end_time": "2026-10-01T10:16:42.243568+00:00",
+      "channel_id": 1476936341420769474,
+      "message_id": 1555160272333836390,
+      "votes": {
+        "on_time": [],
+        "later": [],
+        "no": [
+          1419202066316005476
+        ]
+      },
+      "created_by": 1419202066316005476,
+      "ended": true
+    },
+    "1555562452463128666": {
+      "question": "an pame saturn me hostile tha paizate?",
+      "wipe_time": "paraskevi 10 to vrady",
+      "end_time": "2026-10-03T12:09:50.006610+00:00",
+      "channel_id": 1537103134642536528,
+      "message_id": null,
+      "votes": {
+        "on_time": [],
+        "later": [],
+        "no": []
+      },
+      "created_by": 1419202066316005476,
+      "ended": true
+    },
+    "1555563733579866122": {
+      "question": "an paizame me hostile tha paizate?",
+      "wipe_time": "paraskevi 10",
+      "end_time": "2026-10-03T05:34:55.567455+00:00",
+      "channel_id": 1537103134642536528,
+      "message_id": null,
+      "votes": {
+        "on_time": [],
+        "later": [],
+        "no": []
+      },
+      "created_by": 1419202066316005476,
+      "ended": true
+    },
+    "1555564504836870266": {
+      "question": "tha mpenate clan server me hostile",
+      "wipe_time": "paraskevi 10",
+      "end_time": "2026-10-03T05:37:59.359868+00:00",
+      "channel_id": 1537103134642536528,
+      "message_id": 1555564507776946256,
+      "votes": {
+        "on_time": [],
+        "later": [],
+        "no": [
+          1531396267320541333
+        ]
+      },
+      "created_by": 1419202066316005476,
+      "ended": true
+    },
+    "1555568770582446090": {
+      "question": "would u play in merge with hostile",
+      "wipe_time": "paraskevi stis 9th 10",
+      "end_time": "2026-10-03T05:54:56.590376+00:00",
+      "channel_id": 1537103134642536528,
+      "message_id": null,
+      "votes": {
+        "on_time": [],
+        "later": [],
+        "no": []
+      },
+      "created_by": 1419202066316005476,
+      "ended": true
+    },
+    "1555571416613658624": {
+      "question": "merge hostile",
+      "wipe_time": "paraskevi 9th 10",
+      "end_time": "2026-10-04T02:27:27.449271+00:00",
+      "channel_id": 1537103134642536528,
+      "message_id": null,
+      "votes": {
+        "on_time": [],
+        "later": [],
+        "no": []
+      },
+      "created_by": 1419202066316005476,
+      "ended": true
+    },
+    "1555576054394003526": {
+      "question": "22222",
+      "wipe_time": "20:00 EU",
+      "end_time": "2069-01-01T16:05:52.947338+00:00",
+      "channel_id": 1555570883345514508,
+      "message_id": 1555576056981749831,
+      "votes": {
+        "on_time": [
+          1471135639360504049,
+          1400656024360321024
+        ],
+        "later": [
+          1419202066316005476
+        ],
+        "no": []
+      },
+      "created_by": 1419202066316005476,
+      "ended": true
+    },
+    "1559915331143602256": {
+      "question": "Will you be there for wipe?",
+      "wipe_time": "20:00 EU",
+      "end_time": "2026-10-15T01:06:37.228453+00:00",
+      "channel_id": 1508588193321062611,
+      "message_id": null,
+      "votes": {
+        "on_time": [],
+        "later": [],
+        "no": []
+      },
+      "created_by": 1471135639360504049,
+      "ended": true
+    },
+    "1559915503173238854": {
+      "question": "Will you be there for wipe?",
+      "wipe_time": "20:00 EU",
+      "end_time": "2026-10-15T01:07:18.162048+00:00",
+      "channel_id": 1508588193321062611,
+      "message_id": null,
+      "votes": {
+        "on_time": [],
+        "later": [],
+        "no": []
+      },
+      "created_by": 1471135639360504049,
+      "ended": true
+    },
+    "1561091092093477006": {
+      "question": "1 day to react or kick",
+      "wipe_time": "67",
+      "end_time": "2026-10-18T19:58:40.461957+00:00",
+      "channel_id": 1561089971828424714,
+      "message_id": null,
+      "votes": {
+        "on_time": [],
+        "later": [],
+        "no": []
+      },
+      "created_by": 1419202066316005476,
+      "ended": true
+    },
+    "1561123357259468894": {
+      "question": "react or kick",
+      "wipe_time": "122381",
+      "end_time": "2026-10-19T06:26:53.069968+00:00",
+      "channel_id": 1540921148114604062,
+      "message_id": null,
+      "votes": {
+        "on_time": [],
+        "later": [],
+        "no": []
+      },
+      "created_by": 1419202066316005476,
+      "ended": true
+    }
+  },
+  "greeks_wheel": {
+    "1555166399272460318": {
+      "rewards": [
+        "nigger"
+      ],
+      "required_role_id": null,
+      "required_role_name": "@Spin The Wheel",
+      "channel_id": 1476936341420769474,
+      "message_id": 1555166401998888991,
+      "spins": {},
+      "total_spins": 0
+    }
+  },
+  "greeks_spin": {
+    "1555188425806839819": {
+      "channel_id": 1476936341420769474,
+      "message_id": 1555188429678186602,
+      "spins": 1
+    },
+    "1555199196716597298": {
+      "channel_id": 1476936341420769474,
+      "message_id": 1555199199723917343,
+      "log_channel_id": 1555199121290436788,
+      "required_role_id": 1523413280545177742,
+      "spins": 3,
+      "history": [
+        {
+          "user_id": 1419202066316005476,
+          "user": "lijto.",
+          "type": "XIM MATRIX",
+          "reward": "RANDOM CONFIGS",
+          "time": "2026-10-01T12:46:40.061097+00:00"
+        },
+        {
+          "user_id": 1419202066316005476,
+          "user": "lijto.",
+          "type": "XIM MATRIX",
+          "reward": "MID RUST CONFIGS",
+          "time": "2026-10-01T12:46:50.586650+00:00"
+        },
+        {
+          "user_id": 1419202066316005476,
+          "user": "lijto.",
+          "type": "CRONUS ZEN",
+          "reward": "RANDOM RUST SCRIPTS",
+          "time": "2026-10-01T12:46:53.057029+00:00"
+        }
+      ]
+    },
+    "1555201252705575025": {
+      "channel_id": 1476936341420769474,
+      "message_id": 1555201256073461871,
+      "log_channel_id": 1555199121290436788,
+      "required_role_id": 1523413280545177742,
+      "spins": 1,
+      "history": [
+        {
+          "user_id": 1419202066316005476,
+          "user": "lijto.",
+          "type": "XIM MATRIX",
+          "reward": "R6 CONFIGS",
+          "time": "2026-10-01T12:54:42.076453+00:00"
+        }
+      ]
+    },
+    "1555207301193797683": {
+      "channel_id": 1493423784974352524,
+      "message_id": null,
+      "log_channel_id": 1555199121290436788,
+      "required_role_id": 1523413280545177742,
+      "spins": 0,
+      "history": []
+    },
+    "1555207383486177280": {
+      "channel_id": 1476936341420769474,
+      "message_id": null,
+      "log_channel_id": 1555199121290436788,
+      "required_role_id": null,
+      "spins": 0,
+      "history": []
+    },
+    "1555208535061696552": {
+      "channel_id": 1476936341420769474,
+      "message_id": null,
+      "log_channel_id": 1555199121290436788,
+      "required_role_id": 1489416224118013993,
+      "spins": 0,
+      "history": []
+    },
+    "1555209466805227661": {
+      "channel_id": 1476936341420769474,
+      "message_id": 1555209470093566044,
+      "log_channel_id": 1555199121290436788,
+      "required_role_id": 1523413280545177742,
+      "spins": 1,
+      "history": [
+        {
+          "user": "lijto.",
+          "type": "CRONUS ZEN",
+          "reward": "R6 SCRIPTS",
+          "time": "2026-10-01T13:27:26.047639+00:00"
+        }
+      ]
+    },
+    "1555211297551949834": {
+      "channel_id": 1476936341420769474,
+      "message_id": 1555211300471177377,
+      "log_channel_id": 1555199121290436788,
+      "required_role_id": 1534647625511473465,
+      "spins": 2,
+      "history": [
+        {
+          "user": "lijto.",
+          "type": "XIM MATRIX",
+          "reward": "RANDOM RUST CONFIGS",
+          "time": "2026-10-01T13:34:36.942839+00:00"
+        },
+        {
+          "user": "lijto.",
+          "type": "CRONUS ZEN",
+          "reward": "R6 SCRIPTS",
+          "time": "2026-10-01T13:34:42.925029+00:00"
+        }
+      ]
+    },
+    "1555215745485373490": {
+      "channel_id": 1476936341420769474,
+      "message_id": 1555215748799144037,
+      "log_channel_id": 1555199121290436788,
+      "required_role_id": 1488284218567163936,
+      "spins": 4,
+      "history": [
+        {
+          "user": "lijto.",
+          "type": "XIM MATRIX",
+          "reward": "NOTHING",
+          "time": "2026-10-01T13:52:41.767479+00:00"
+        },
+        {
+          "user": "lijto.",
+          "type": "XIM MATRIX",
+          "reward": "RANDOM RUST CONFIGS",
+          "time": "2026-10-01T13:52:45.621333+00:00"
+        },
+        {
+          "user": "lijto.",
+          "type": "CRONUS ZEN",
+          "reward": "NOTHING",
+          "time": "2026-10-01T13:52:49.101322+00:00"
+        },
+        {
+          "user": "lijto.",
+          "type": "CRONUS ZEN",
+          "reward": "NOTHING",
+          "time": "2026-10-01T13:52:51.067058+00:00"
+        }
+      ]
+    },
+    "1555218009486794792": {
+      "channel_id": 1476936341420769474,
+      "message_id": 1555218014721286209,
+      "log_channel_id": 1555199121290436788,
+      "required_role_id": 1488284218567163936,
+      "spins": 3,
+      "history": [
+        {
+          "user": "lijto.",
+          "id": 1419202066316005476,
+          "type": "CRONUS ZEN",
+          "reward": "NOTHING",
+          "time": "2026-10-01T14:01:51.514586+00:00"
+        },
+        {
+          "user": "lijto.",
+          "id": 1419202066316005476,
+          "type": "XIM MATRIX",
+          "reward": "NOTHING",
+          "time": "2026-10-01T14:01:55.164172+00:00"
+        },
+        {
+          "user": "lijto.",
+          "id": 1419202066316005476,
+          "type": "XIM MATRIX",
+          "reward": "MID RUST CONFIGS",
+          "time": "2026-10-01T14:01:57.504306+00:00"
+        }
+      ]
+    },
+    "1555225449464856717": {
+      "channel_id": 1476936341420769474,
+      "message_id": 1555225453789323294,
+      "log_channel_id": 1555199121290436788,
+      "required_role_id": 1488284218567163936,
+      "spins": 0,
+      "history": []
+    },
+    "1555225982716354670": {
+      "channel_id": 1476936341420769474,
+      "message_id": 1555225985366888512,
+      "log_channel_id": 1555199121290436788,
+      "required_role_id": 1488284218567163936,
+      "spins": 0,
+      "history": []
+    },
+    "1555227476391624805": {
+      "channel_id": 1476936341420769474,
+      "message_id": 1555227479600267424,
+      "log_channel_id": 1555199121290436788,
+      "required_role_id": 1488284218567163936,
+      "spins": 5,
+      "history": [
+        {
+          "user": "lijto.",
+          "id": 1419202066316005476,
+          "type": "CRONUS ZEN WHEEL",
+          "reward": "NOTHING",
+          "time": "2026-10-01T14:38:53.834544+00:00"
+        },
+        {
+          "user": "lijto.",
+          "id": 1419202066316005476,
+          "type": "CRONUS ZEN WHEEL",
+          "reward": "NOTHING",
+          "time": "2026-10-01T14:38:59.060286+00:00"
+        },
+        {
+          "user": "lijto.",
+          "id": 1419202066316005476,
+          "type": "CRONUS ZEN WHEEL",
+          "reward": "NOTHING",
+          "time": "2026-10-01T14:39:01.079367+00:00"
+        },
+        {
+          "user": "lijto.",
+          "id": 1419202066316005476,
+          "type": "CRONUS ZEN WHEEL",
+          "reward": "NOTHING",
+          "time": "2026-10-01T14:39:03.452172+00:00"
+        },
+        {
+          "user": "lijto.",
+          "id": 1419202066316005476,
+          "type": "CRONUS ZEN WHEEL",
+          "reward": "BEST RUST SCRIPTS",
+          "time": "2026-10-01T14:39:06.261268+00:00"
+        }
+      ]
+    },
+    "1555228681171902544": {
+      "channel_id": 1555228246508044481,
+      "message_id": 1555228685710401677,
+      "log_channel_id": 1555199121290436788,
+      "required_role_id": 1487612021452177529,
+      "spins": 2,
+      "history": [
+        {
+          "user": "lijto.",
+          "id": 1419202066316005476,
+          "type": "CRONUS ZEN WHEEL",
+          "reward": "NOTHING",
+          "time": "2026-10-01T14:43:54.996600+00:00"
+        },
+        {
+          "user": "lijto.",
+          "id": 1419202066316005476,
+          "type": "XIM MATRIX WHEEL",
+          "reward": "RANDOM RUST CONFIGS",
+          "time": "2026-10-01T14:45:36.432879+00:00"
+        }
+      ]
+    },
+    "1555230212285792296": {
+      "channel_id": 1555228246508044481,
+      "message_id": 1555230215188258839,
+      "log_channel_id": 1555199121290436788,
+      "required_role_id": 1487612021452177529,
+      "spins": 25,
+      "history": [
+        {
+          "user": "lijto.",
+          "id": 1419202066316005476,
+          "type": "CRONUS ZEN WHEEL",
+          "reward": "NOTHING",
+          "time": "2026-10-01T14:49:50.891979+00:00"
+        },
+        {
+          "user": "ygotyv",
+          "id": 1531396267320541333,
+          "type": "CRONUS ZEN WHEEL",
+          "reward": "NOTHING",
+          "time": "2026-10-01T14:52:10.822072+00:00"
+        },
+        {
+          "user": "lutqix121",
+          "id": 1370062875103854683,
+          "type": "CRONUS ZEN WHEEL",
+          "reward": "RANDOM SCRIPTS",
+          "time": "2026-10-01T17:49:00.249982+00:00"
+        },
+        {
+          "user": "reiuw13",
+          "id": 1330842918189006850,
+          "type": "CRONUS ZEN WHEEL",
+          "reward": "NOTHING",
+          "time": "2026-10-01T18:13:05.522235+00:00"
+        },
+        {
+          "user": "kekzxi1",
+          "id": 814860710555025478,
+          "type": "CRONUS ZEN WHEEL",
+          "reward": "NOTHING",
+          "time": "2026-10-01T19:30:06.810718+00:00"
+        },
+        {
+          "user": "lijto.",
+          "id": 1419202066316005476,
+          "type": "CRONUS ZEN WHEEL",
+          "reward": "R6 SCRIPTS",
+          "time": "2026-10-02T07:37:45.800977+00:00"
+        },
+        {
+          "user": "xamogelasth3",
+          "id": 899711382457569331,
+          "type": "CRONUS ZEN WHEEL",
+          "reward": "NOTHING",
+          "time": "2026-10-02T15:01:09.602836+00:00"
+        },
+        {
+          "user": "reiuw13",
+          "id": 1330842918189006850,
+          "type": "CRONUS ZEN WHEEL",
+          "reward": "NOTHING",
+          "time": "2026-10-02T15:24:31.754891+00:00"
+        },
+        {
+          "user": "lijto.",
+          "id": 1419202066316005476,
+          "type": "CRONUS ZEN WHEEL",
+          "reward": "NOTHING",
+          "time": "2026-10-02T18:04:25.258033+00:00"
+        },
+        {
+          "user": "b3ttercallnick",
+          "id": 1387103254537572453,
+          "type": "XIM MATRIX WHEEL",
+          "reward": "NOTHING",
+          "time": "2026-10-04T16:19:31.393733+00:00"
+        },
+        {
+          "user": "convexed_eu",
+          "id": 1400656024360321024,
+          "type": "CRONUS ZEN WHEEL",
+          "reward": "NOTHING",
+          "time": "2026-10-05T00:42:36.577592+00:00"
+        },
+        {
+          "user": "xamogelasth3",
+          "id": 899711382457569331,
+          "type": "XIM MATRIX WHEEL",
+          "reward": "NOTHING",
+          "time": "2026-10-05T10:14:24.957023+00:00"
+        },
+        {
+          "user": "lijto.",
+          "id": 1419202066316005476,
+          "type": "CRONUS ZEN WHEEL",
+          "reward": "NOTHING",
+          "time": "2026-10-06T12:48:57.242028+00:00"
+        },
+        {
+          "user": "lijto.",
+          "id": 1419202066316005476,
+          "type": "XIM MATRIX WHEEL",
+          "reward": "NOTHING",
+          "time": "2026-10-13T12:24:25.783927+00:00"
+        },
+        {
+          "user": "kaicenat.01",
+          "id": 1539659259287969876,
+          "type": "XIM MATRIX WHEEL",
+          "reward": "NOTHING",
+          "time": "2026-10-13T17:46:35.009657+00:00"
+        },
+        {
+          "user": "kekzxi1",
+          "id": 814860710555025478,
+          "type": "CRONUS ZEN WHEEL",
+          "reward": "NOTHING",
+          "time": "2026-10-14T19:48:36.034693+00:00"
+        },
+        {
+          "user": "kekzxi1",
+          "id": 814860710555025478,
+          "type": "CRONUS ZEN WHEEL",
+          "reward": "NOTHING",
+          "time": "2026-10-15T17:01:22.721464+00:00"
+        },
+        {
+          "user": "ygotyv",
+          "id": 1531396267320541333,
+          "type": "CRONUS ZEN WHEEL",
+          "reward": "NOTHING",
+          "time": "2026-10-15T17:01:46.318156+00:00"
+        },
+        {
+          "user": "bean080069",
+          "id": 1421137132147179530,
+          "type": "CRONUS ZEN WHEEL",
+          "reward": "NOTHING",
+          "time": "2026-10-16T17:29:21.294476+00:00"
+        },
+        {
+          "user": "kekzxi1",
+          "id": 814860710555025478,
+          "type": "CRONUS ZEN WHEEL",
+          "reward": "MID RUST SCRIPTS",
+          "time": "2026-10-16T23:10:21.815001+00:00"
+        },
+        {
+          "user": "bean080069",
+          "id": 1421137132147179530,
+          "type": "CRONUS ZEN WHEEL",
+          "reward": "MID RUST SCRIPTS",
+          "time": "2026-10-17T00:05:39.205159+00:00"
+        },
+        {
+          "user": "xqrollerxqq",
+          "id": 1119631605535867021,
+          "type": "CRONUS ZEN WHEEL",
+          "reward": "NOTHING",
+          "time": "2026-10-17T18:41:29.446354+00:00"
+        },
+        {
+          "user": "bean080069",
+          "id": 1421137132147179530,
+          "type": "CRONUS ZEN WHEEL",
+          "reward": "NOTHING",
+          "time": "2026-10-17T21:39:48.270300+00:00"
+        },
+        {
+          "user": "bean080069",
+          "id": 1421137132147179530,
+          "type": "CRONUS ZEN WHEEL",
+          "reward": "NOTHING",
+          "time": "2026-10-18T16:43:11.632106+00:00"
+        },
+        {
+          "user": "xqrollerxqq",
+          "id": 1119631605535867021,
+          "type": "CRONUS ZEN WHEEL",
+          "reward": "R6 SCRIPTS",
+          "time": "2026-10-19T17:38:06.761043+00:00"
+        }
+      ]
+    },
+    "1561897894594744360": {
+      "channel_id": 1555228246508044481,
+      "message_id": 1561897898055303199,
+      "log_channel_id": 1555199121290436788,
+      "required_role_id": 1488284218567163936,
+      "spins": 0,
+      "history": []
+    },
+    "1562258346336059422": {
+      "channel_id": 1555228246508044481,
+      "message_id": 1562258349586915391,
+      "log_channel_id": 1555199121290436788,
+      "required_role_id": 1488284218567163936,
+      "spins": 0,
+      "history": []
+    },
+    "1562260305239609416": {
+      "channel_id": 1555228246508044481,
+      "message_id": 1562260309563932683,
+      "required_role_id": 1488284218567163936,
+      "spins": 0,
+      "history": []
+    },
+    "1562261015503175730": {
+      "channel_id": 1555228246508044481,
+      "message_id": 1562261018649034773,
+      "required_role_id": 1488284218567163936,
+      "spins": 6,
+      "history": []
+    }
+  },
+  "greeks_cooldowns": {
+    "1419202066316005476": "2026-10-22T11:56:59.578597+00:00",
+    "1531396267320541333": "2026-10-15T17:01:46.318032+00:00",
+    "1370062875103854683": "2026-10-01T17:49:00.249923+00:00",
+    "1330842918189006850": "2026-10-22T10:28:41.400201+00:00",
+    "814860710555025478": "2026-10-21T19:47:27.021416+00:00",
+    "899711382457569331": "2026-10-05T10:14:24.956910+00:00",
+    "1387103254537572453": "2026-10-21T23:14:26.781824+00:00",
+    "1400656024360321024": "2026-10-05T00:42:36.577441+00:00",
+    "1539659259287969876": "2026-10-13T17:46:35.009611+00:00",
+    "1421137132147179530": "2026-10-18T16:43:11.632078+00:00",
+    "1119631605535867021": "2026-10-19T17:38:06.761002+00:00"
+  },
+  "panel": {
+    "channel_id": 1487833539306328104,
+    "message_id": 1561138598000988324,
+    "guild_id": 1472206730862526646,
+    "wipe_channel": 1508503359454187693,
+    "wipe_message": 1555567582143185047
+  },
+  "base_polls": {
+    "1555585424305557595": {
+      "question": "channel:",
+      "images": [
+        "https://cdn.discordapp.com/ephemeral-attachments/1555585096948392036/1555585416814403604/0621_2.mp4?ex=6ac10f50&is=6abfbdd0&hm=194b0dd09704a2a3e335da88e098dad3f78d2edd43b2df029fc29220f623a1b9&",
+        "https://cdn.discordapp.com/ephemeral-attachments/1555585096948392036/1555585419645554779/06212.mp4?ex=6ac10f51&is=6abfbdd1&hm=f15077f896edd112359624bf8c2376e43e1b466a057fdb249f188c4f8d8aba0e&",
+        "https://cdn.discordapp.com/ephemeral-attachments/1555585096948392036/1555585421772328960/0621_1.mp4?ex=6ac10f51&is=6abfbdd1&hm=31c2eb8edf666a430882c9d31ffb14efe8688ee9619f4150dad597c9ad45991d&"
+      ],
+      "options": [
+        "1",
+        "2",
+        "Base 4"
+      ],
+      "votes": {
+        "opt_0": [],
+        "opt_1": [],
+        "opt_2": []
+      },
+      "end_time": "2026-10-02T14:41:06.959509+00:00",
+      "channel_id": 1506774224608694394,
+      "message_id": 1555585427488907325,
+      "ended": true
+    },
+    "1555585792569508021": {
+      "question": "1",
+      "images": [
+        "https://cdn.discordapp.com/ephemeral-attachments/1555585096948392036/1555585782033424396/0621_2.mp4?ex=6ac10fa7&is=6abfbe27&hm=6a54656e3dc834e25e73f0e83ad8f3e29d3ec82187a47f46f31b2e859f95581c&",
+        "https://cdn.discordapp.com/ephemeral-attachments/1555585096948392036/1555585783971315802/0621_2.mp4?ex=6ac10fa8&is=6abfbe28&hm=ef66164d187da51364738624b3bcf3d1f421897d7b7cb2615c0cd67175caeb34&",
+        "https://cdn.discordapp.com/ephemeral-attachments/1555585096948392036/1555585785858887771/0621_1.mp4?ex=6ac10fa8&is=6abfbe28&hm=57897419736433c903087e03111656a2567f9a21ca25674dc3a1c7c756314f2e&",
+        "https://cdn.discordapp.com/ephemeral-attachments/1555585096948392036/1555585787343675514/abcdefg.jpg?ex=6ac10fa9&is=6abfbe29&hm=3c1c1d8f3c43e0689caced6afdee7a47f63c086844c69f950669da06b537edf8&",
+        "https://cdn.discordapp.com/ephemeral-attachments/1555585096948392036/1555585788266160240/abcdefg.jpg?ex=6ac10fa9&is=6abfbe29&hm=666c0ac44854640feab2d077f5654a20fb5c5ced63e8276586a15fbc002ecddd&"
+      ],
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "votes": {
+        "opt_0": [],
+        "opt_1": [],
+        "opt_2": [],
+        "opt_3": [],
+        "opt_4": [
+          1419202066316005476
+        ]
+      },
+      "end_time": "2026-10-02T18:04:34.716592+00:00",
+      "channel_id": 1487616945540042943,
+      "message_id": 1555585794876375101,
+      "ended": true
+    },
+    "1555587602122285137": {
+      "question": "pio einai pio amea",
+      "images": [
+        "https://cdn.discordapp.com/ephemeral-attachments/1555587231983468685/1555587595994398932/5CF4430D-69D5-4AFE-81A4-8B086B0DAAF1.jpg?ex=6ac11158&is=6abfbfd8&hm=9b4f1b75d54d51d3ca94ad9ed955730636c49590efc9534286a746245b26dbf6&",
+        "https://cdn.discordapp.com/ephemeral-attachments/1555587231983468685/1555587597269602416/IMG_20260630_230422_428.jpg?ex=6ac11158&is=6abfbfd8&hm=5d63a5abe6cf80f401417241f07a20f4f3f80ea3aee0cb4840bc372374d016db&"
+      ],
+      "options": [
+        "nick official",
+        "thanakos"
+      ],
+      "votes": {
+        "opt_0": [
+          1330842918189006850
+        ],
+        "opt_1": []
+      },
+      "end_time": "2026-10-02T14:51:46.258392+00:00",
+      "channel_id": 1487616945540042943,
+      "message_id": 1555587605242847242,
+      "ended": true
+    }
+  },
+  "antinuke_full": {
+    "bypass_roles": [
+      1556658141700030565,
+      1555569509010645083,
+      1556445457960538182
+    ],
+    "anti_ban": {
+      "enabled": true,
+      "limit": 2,
+      "time": 60,
+      "punishment": "ban"
+    },
+    "anti_kick": {
+      "enabled": true,
+      "limit": 2,
+      "time": 60,
+      "punishment": "ban"
+    },
+    "anti_channel_delete": {
+      "enabled": true,
+      "limit": 2,
+      "time": 2,
+      "punishment": "ban"
+    },
+    "anti_role_delete": {
+      "enabled": true,
+      "limit": 2,
+      "time": 2,
+      "punishment": "ban"
+    },
+    "anti_mute": {
+      "enabled": true,
+      "limit": 2,
+      "time": 60,
+      "punishment": "ban"
+    },
+    "anti_bot_add": {
+      "enabled": true,
+      "punishment": "ban_both"
+    }
+  },
+  "antilink": {
+    "enabled": true,
+    "bypass_roles": [
+      1487610846967365702,
+      1487611706136858795,
+      1487611355287785473,
+      1510637433408979115
+    ],
+    "bypass_channels": [],
+    "log_channel": 1555622884695867483,
+    "punishment": "timeout_10m",
+    "warn_message": true
+  },
+  "rust_teams": {
+    "invite_allowed_roles": [
+      1539753310079287296,
+      1539753405910880256,
+      1487610846967365702,
+      1487611706136858795,
+      1487611355287785473
+    ],
+    "log_channel": 1555492527673581588,
+    "team_role_id": 1487612021452177529
+  },
+  "temp_voice_lobbies": [
+    1487616260371120289,
+    1492285076577321073
+  ],
+  "invite_history": {
+    "764533961577725982": {
+      "invited_by": 1119631605535867021,
+      "code": "R2tgJsRDg",
+      "at": 1792264323,
+      "name": "vok_vouikil"
+    },
+    "1462290242634645538": {
+      "invited_by": 1119631605535867021,
+      "code": "R2tgJsRDg",
+      "at": 1792264379,
+      "name": "odc.rex"
+    },
+    "1043479368107839498": {
+      "invited_by": 1119631605535867021,
+      "code": "R2tgJsRDg",
+      "at": 1792264958,
+      "name": "hypergonkz"
+    },
+    "1188697884581957703": {
+      "invited_by": 1119631605535867021,
+      "code": "R2tgJsRDg",
+      "at": 1792265231,
+      "name": "ajzens"
+    },
+    "1437208108853104822": {
+      "invited_by": 1119631605535867021,
+      "code": "R2tgJsRDg",
+      "at": 1792525017,
+      "name": "chickenwing0507"
+    },
+    "586417583654174720": {
+      "invited_by": 1419202066316005476,
+      "code": "QnhujjA6gz",
+      "at": 1792890518,
+      "name": "ace.wrld"
+    },
+    "1325901584848257137": {
+      "invited_by": 1419202066316005476,
+      "code": "QnhujjA6gz",
+      "at": 1792891954,
+      "name": "anfen._."
+    },
+    "1273415098597249177": {
+      "invited_by": 1419202066316005476,
+      "code": "QnhujjA6gz",
+      "at": 1792943740,
+      "name": ".the_man24"
+    },
+    "1101781212370047058": {
+      "invited_by": 1419202066316005476,
+      "code": "QnhujjA6gz",
+      "at": 1792943968,
+      "name": "vuki13278"
+    },
+    "1393302493282308140": {
+      "invited_by": 1419202066316005476,
+      "code": "kFjka2fYG5",
+      "at": 1792948616,
+      "name": "apexis176"
+    },
+    "1400656024360321024": {
+      "invited_by": 1387103254537572453,
+      "code": "h4pdjCY4",
+      "at": 1792961129,
+      "name": "convexed_eu"
+    },
+    "1090737067434201209": {
+      "invited_by": 1419202066316005476,
+      "code": "QnhujjA6gz",
+      "at": 1793004655,
+      "name": "noskyy"
+    },
+    "1191115596360859868": {
+      "invited_by": 1419202066316005476,
+      "code": "QnhujjA6gz",
+      "at": 1793027635,
+      "name": "jakeb444"
+    },
+    "1544032244119633930": {
+      "invited_by": 1419202066316005476,
+      "code": "QnhujjA6gz",
+      "at": 1793028488,
+      "name": "rustgamer_123_33177"
+    },
+    "1360680717910278357": {
+      "invited_by": 1419202066316005476,
+      "code": "QnhujjA6gz",
+      "at": 1793040391,
+      "name": "someone.ffx"
+    },
+    "261259838418452480": {
+      "invited_by": 1419202066316005476,
+      "code": "QnhujjA6gz",
+      "at": 1793050876,
+      "name": "zinx_inferno"
+    },
+    "1510010395711111339": {
+      "invited_by": 1531396267320541333,
+      "code": "5BW7R4WRR",
+      "at": 1793056542,
+      "name": "papakis23213"
+    }
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "enabled": true,
+  "log_channel": 1555622884695867483,
+  "bypass_roles": [
+    1556339607199686686,
+    1487610846967365702
+  ],
+  "punishment": "ban",
+  "whitelist_bots": [],
+  "time_window": 60,
+  "limits": {
+    "ban": 2,
+    "kick": 2,
+    "timeout": 2,
+    "channel_delete": 2,
+    "channel_create": 2,
+    "role_delete": 2,
+    "role_create": 2,
+    "webhook": 2,
+    "bot_add": 1
+  },
+  "protection": {
+    "anti_bot": true,
+    "anti_ban": true,
+    "anti_kick": true,
+    "anti_timeout": true,
+    "anti_channel_delete": true,
+    "anti_channel_create": true,
+    "anti_role_delete": true,
+    "anti_role_create": true,
+    "anti_webhook": true,
+    "anti_scam": true,
+    "anti_mrbeast_image": true,
+    "anti_everyone_spam": true
+  }
+}
