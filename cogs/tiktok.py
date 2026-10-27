@@ -1,514 +1,464 @@
-import asyncio
-import json
-import os
-import re
-from datetime import datetime, timezone
- 
-import aiohttp
 import discord
-from discord import app_commands
 from discord.ext import commands, tasks
- 
-DATA_FILE = "data/tiktok.json"
-CHECK_MINUTES = int(os.getenv("TIKTOK_INTERVAL", "5"))
-PROXY = os.getenv("TIKTOK_PROXY")   # optional, e.g. http://user:pass@host:port
-RSSHUB = os.getenv("RSSHUB_URL")    # optional, your own RSSHub instance
-APIFY_TOKEN = os.getenv("APIFY_TOKEN")  # optional, most reliable source
-UPDATE_HOURS = int(os.getenv("TIKTOK_UPDATE_HOURS", "24"))  # refresh stats every N hours
-TRACK_DAYS = int(os.getenv("TIKTOK_TRACK_DAYS", "7"))       # keep refreshing for N days
-HEADERS = {
-    "User-Agent": (
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
-        "(KHTML, like Gecko) Chrome/124.0 Safari/537.36"
-    ),
-    "Accept": "application/json",
-}
- 
- 
-def role_mention(guild_id: int, role_id: int) -> str:
-    # the @everyone "role" has the same id as the guild
-    return "@everyone" if role_id == guild_id else f"<@&{role_id}>"
- 
- 
-class TikTokView(discord.ui.LayoutView):
-    """Components V2 'embed' with separators and link buttons."""
- 
-    def __init__(self, username: str, video: dict, ping: str | None = None):
-        super().__init__(timeout=None)
- 
-        vid_id = video["video_id"]
-        url = f"https://www.tiktok.com/@{username}/video/{vid_id}"
-        profile = f"https://www.tiktok.com/@{username}"
-        title = (video.get("title") or "No title").strip()[:300]
-        ts = int(video.get("create_time", datetime.now(timezone.utc).timestamp()))
- 
-        container = discord.ui.Container()
- 
-        if ping:
-            container.add_item(discord.ui.TextDisplay(ping))
-        container.add_item(
-            discord.ui.TextDisplay(
-                f"## <:372102690_TIKTOK_LOGO_1080:1564035875057438883> New TikTok from @{username}"
-            )
-        )
-        container.add_item(
-            discord.ui.Separator(visible=True, spacing=discord.SeparatorSpacing.small)
-        )
- 
-        text = discord.ui.TextDisplay(f"**{title}**\n\n📅 Posted <t:{ts}:R>")
-        cover = video.get("cover") or video.get("origin_cover")
-        if cover:
-            container.add_item(discord.ui.Section(text, accessory=discord.ui.Thumbnail(cover)))
-        else:
-            container.add_item(text)
- 
-        container.add_item(
-            discord.ui.Separator(visible=True, spacing=discord.SeparatorSpacing.small)
-        )
- 
-        stats = (
-            f"❤️ {video.get('digg_count', 0):,}  •  "
-            f"💬 {video.get('comment_count', 0):,}  •  "
-            f"👁️ {video.get('play_count', 0):,}  •  "
-            f"🔁 {video.get('share_count', 0):,}"
-        )
-        container.add_item(discord.ui.TextDisplay(stats))
- 
-        container.add_item(
-            discord.ui.Separator(visible=True, spacing=discord.SeparatorSpacing.large)
-        )
- 
-        row = discord.ui.ActionRow()
-        row.add_item(
-            discord.ui.Button(label="Watch video", emoji="▶️", style=discord.ButtonStyle.link, url=url)
-        )
-        row.add_item(
-            discord.ui.Button(label="Profile", emoji="👤", style=discord.ButtonStyle.link, url=profile)
-        )
-        container.add_item(row)
- 
-        self.add_item(container)
- 
- 
-class TikTok(commands.Cog):
-    def __init__(self, bot: commands.Bot):
+from discord import app_commands
+import os
+import json
+import asyncio
+import aiohttp
+import re
+from datetime import datetime
+
+DATA_FILE = "tiktok_data.json"
+TIKTOK_EMOJI = "<:372102690_TIKTOK_LOGO_1080:1564035875057438883>"
+
+class TikTokNotify(commands.Cog):
+    def __init__(self, bot):
         self.bot = bot
-        self.session: aiohttp.ClientSession | None = None
-        os.makedirs("data", exist_ok=True)
-        self.data = self.load()
- 
-    # ---------- lifecycle ----------
-    async def cog_load(self):
-        self.session = aiohttp.ClientSession(headers=HEADERS)
-        self.check_loop.start()
-        self.update_loop.start()
- 
-    async def cog_unload(self):
-        self.check_loop.cancel()
-        self.update_loop.cancel()
-        if self.session:
-            await self.session.close()
- 
-    # ---------- storage ----------
-    def load(self) -> dict:
-        if os.path.exists(DATA_FILE):
-            try:
-                with open(DATA_FILE, "r", encoding="utf-8") as f:
-                    return json.load(f)
-            except Exception:
-                pass
-        return {}
- 
-    def save(self):
-        with open(DATA_FILE, "w", encoding="utf-8") as f:
-            json.dump(self.data, f, indent=2, ensure_ascii=False)
- 
-    # ---------- fetch ----------
-    # Every source returns a LIST of normalized videos. If one is blocked, the next is used.
-    async def _get(self, url: str, **kw):
-        async with self.session.get(
-            url, proxy=PROXY, timeout=aiohttp.ClientTimeout(total=25), **kw
-        ) as r:
-            return r.status, await r.text()
- 
-    @staticmethod
-    def _norm_web(it: dict) -> dict:
-        """Normalize a TikTok web-JSON item."""
-        st = it.get("stats") or {}
-        vd = it.get("video") or {}
-        vid = str(it["id"])
-        return {
-            "video_id": vid,
-            "title": it.get("desc", ""),
-            "cover": vd.get("cover") or vd.get("originCover") or it.get("cover"),
-            "create_time": int(it.get("createTime") or (int(vid) >> 32)),
-            "play_count": st.get("playCount", 0),
-            "digg_count": st.get("diggCount", 0),
-            "comment_count": st.get("commentCount", 0),
-            "share_count": st.get("shareCount", 0),
-        }
- 
-    @staticmethod
-    def _walk(o, out: dict, strict: bool):
-        if isinstance(o, dict):
-            vid = str(o.get("id", ""))
-            if vid.isdigit() and 15 <= len(vid) <= 20:
-                if ("createTime" in o and "desc" in o) if strict else (
-                    "desc" in o or "createTime" in o or "stats" in o
-                ):
-                    out[vid] = o
-            for v in o.values():
-                TikTok._walk(v, out, strict)
-        elif isinstance(o, list):
-            for v in o:
-                TikTok._walk(v, out, strict)
- 
-    async def _src_profile(self, username: str) -> list[dict]:
-        """Read the public profile page + official oEmbed."""
-        status, html = await self._get(
-            f"https://www.tiktok.com/@{username}",
-            headers={**HEADERS, "Accept": "text/html,application/xhtml+xml", "Accept-Language": "en-US,en;q=0.9"},
-        )
-        if "Just a moment" in html[:2000] or status in (403, 429):
-            raise RuntimeError(f"TikTok profile blocked (HTTP {status})")
-        if status == 404:
-            raise RuntimeError("Account does not exist")
- 
-        m = re.search(
-            r'<script id="__UNIVERSAL_DATA_FOR_REHYDRATION__"[^>]*>(.*?)</script>', html, re.S
-        )
-        if m:
-            try:
-                found: dict = {}
-                self._walk(json.loads(m.group(1)), found, strict=True)
-                if found:
-                    return [self._norm_web(i) for i in found.values()]
-            except Exception as e:
-                print(f"[TikTok] json parse failed: {e}")
- 
-        ids = re.findall(rf"/@{re.escape(username)}/video/(\d{{15,20}})", html, re.I)
-        if not ids:
-            raise RuntimeError("No videos found on profile page (private/empty/blocked)")
-        vid = str(max(int(i) for i in ids))
-        video = {"video_id": vid, "title": "", "cover": None, "create_time": int(vid) >> 32}
+        self.data = self.load_data()
+        self.session = None
+        print(f"[TikTok] Loaded - NO CLOUDFLARE - secUid API + INSANE CLEAN")
+        self.check_tiktok.start()
+
+    def load_data(self):
+        if not os.path.exists(DATA_FILE):
+            return {"guilds": {}}
         try:
-            s2, body = await self._get(
-                "https://www.tiktok.com/oembed",
-                params={"url": f"https://www.tiktok.com/@{username}/video/{vid}"},
-            )
-            js = json.loads(body)
-            video["title"] = js.get("title", "")
-            video["cover"] = js.get("thumbnail_url")
+            with open(DATA_FILE, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except:
+            return {"guilds": {}}
+
+    def save_data(self):
+        with open(DATA_FILE, 'w', encoding='utf-8') as f:
+            json.dump(self.data, f, indent=4)
+
+    def get_guild_data(self, guild_id):
+        gid = str(guild_id)
+        if gid not in self.data["guilds"]:
+            self.data["guilds"][gid] = {"channel_id": None, "users": {}}
+        return self.data["guilds"][gid]
+
+    async def get_session(self):
+        if not self.session or self.session.closed:
+            self.session = aiohttp.ClientSession()
+        return self.session
+
+    def create_insane_clean_message(self, username, display_name, video_url):
+        """INSANE CLEAN - Only latest video, button inside"""
+        try:
+            view = discord.ui.LayoutView()
+            container = discord.ui.Container()
+            
+            container.add_item(discord.ui.TextDisplay(f"## {TIKTOK_EMOJI} @{username} just uploaded!"))
+            container.add_item(discord.ui.Separator(spacing=discord.SeparatorSpacing.large, divider=False))
+            container.add_item(discord.ui.TextDisplay(f"**{display_name}** • `@{username}`"))
+            container.add_item(discord.ui.Separator(spacing=discord.SeparatorSpacing.small, divider=True))
+            container.add_item(discord.ui.TextDisplay(f"{video_url}"))
+            container.add_item(discord.ui.Separator(spacing=discord.SeparatorSpacing.large, divider=False))
+            
+            action_row = discord.ui.ActionRow()
+            action_row.add_item(discord.ui.Button(label="Watch on TikTok", style=discord.ButtonStyle.link, url=video_url))
+            container.add_item(action_row)
+            
+            view.add_item(container)
+            return view
         except Exception as e:
-            print(f"[TikTok] oembed failed: {e}")
-        return [video]
- 
-    async def _src_tikwm(self, username: str) -> list[dict]:
-        status, raw = await self._get(
-            "https://www.tikwm.com/api/user/posts",
-            params={"unique_id": username, "count": 10, "cursor": 0},
-            headers=HEADERS,
-        )
+            print(f"[TikTok] Clean error: {e}")
+            view = discord.ui.View(timeout=None)
+            view.add_item(discord.ui.Button(label="Watch on TikTok", style=discord.ButtonStyle.link, url=video_url))
+            return view
+
+    async def fetch_with_secuid_api(self, username, session):
+        """Use secUid extraction + TikTok internal API - bypasses block without Cloudflare"""
         try:
-            js = json.loads(raw)
-        except json.JSONDecodeError:
-            raise RuntimeError(f"tikwm blocked (HTTP {status})")
-        if js.get("code") != 0:
-            raise RuntimeError(f"tikwm error: {js.get('msg')}")
-        videos = (js.get("data") or {}).get("videos") or []
-        if not videos:
-            raise RuntimeError("tikwm: no videos")
-        return [
-            {**v, "video_id": str(v["video_id"])} for v in videos
-        ]
- 
-    async def _src_rsshub(self, username: str) -> list[dict]:
-        if not RSSHUB:
-            raise RuntimeError("RSSHub not configured")
-        status, xml = await self._get(f"{RSSHUB.rstrip('/')}/tiktok/user/@{username}")
-        ids = set(re.findall(r"/video/(\d{15,20})", xml))
-        if not ids:
-            raise RuntimeError(f"RSSHub returned nothing (HTTP {status})")
-        return [
-            {"video_id": i, "title": "", "cover": None, "create_time": int(i) >> 32}
-            for i in ids
-        ]
- 
-    async def _src_embed(self, username: str) -> list[dict]:
-        """TikTok public embed page of a profile."""
-        status, html = await self._get(
-            f"https://www.tiktok.com/embed/@{username}",
-            headers={**HEADERS, "Accept": "text/html"},
-        )
-        if status != 200 or "Just a moment" in html[:2000]:
-            raise RuntimeError(f"embed blocked (HTTP {status})")
-        found: dict = {}
-        for m in re.finditer(r"<script[^>]*>(\{.*?\})</script>", html, re.S):
+            print(f"[TikTok] Trying secUid API for @{username}")
+            
+            headers = {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+                "Referer": f"https://www.tiktok.com/@{username}",
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+                "Accept-Language": "en-US,en;q=0.9",
+            }
+            
+            # Step 1: Get page even if blocked - it may still contain secUid
             try:
-                self._walk(json.loads(m.group(1)), found, strict=False)
-            except Exception:
-                continue
-        if not found:
-            raise RuntimeError("embed page has no video list")
-        return [self._norm_web(i) for i in found.values()]
- 
-    async def _src_apify(self, username: str) -> list[dict]:
-        """Apify TikTok scraper (needs APIFY_TOKEN). Works from any host."""
-        if not APIFY_TOKEN:
-            raise RuntimeError("APIFY_TOKEN not set")
-        url = (
-            "https://api.apify.com/v2/acts/clockworks~tiktok-scraper/"
-            f"run-sync-get-dataset-items?token={APIFY_TOKEN}"
-        )
-        payload = {
-            "profiles": [username],
-            "resultsPerPage": 5,
-            "profileSorting": "latest",
-            "excludePinnedPosts": True,
-            "shouldDownloadVideos": False,
-            "shouldDownloadCovers": False,
-        }
-        async with self.session.post(
-            url, json=payload, timeout=aiohttp.ClientTimeout(total=150)
-        ) as r:
-            status = r.status
-            body = await r.text()
-        if status not in (200, 201):
-            raise RuntimeError(f"apify HTTP {status}: {body[:150]}")
-        items = [i for i in json.loads(body) if i.get("id")]
-        if not items:
-            raise RuntimeError("apify returned no videos")
-        out = []
-        for it in items:
-            meta = it.get("videoMeta") or {}
-            out.append({
-                "video_id": str(it["id"]),
-                "title": it.get("text", ""),
-                "cover": meta.get("coverUrl") or meta.get("originalCoverUrl"),
-                "create_time": int(it.get("createTime", 0)),
-                "play_count": it.get("playCount", 0),
-                "digg_count": it.get("diggCount", 0),
-                "comment_count": it.get("commentCount", 0),
-                "share_count": it.get("shareCount", 0),
-            })
-        return out
- 
-    async def fetch_videos(self, username: str) -> tuple[list[dict] | None, str | None]:
-        """Returns (videos, error_message). Tries every source until one works."""
-        errors = []
-        sources = []
-        if APIFY_TOKEN:
-            sources.append(("apify", self._src_apify))
-        sources += [
-            ("embed", self._src_embed),
-            ("profile", self._src_profile),
-            ("tikwm", self._src_tikwm),
-        ]
-        if RSSHUB:
-            sources.append(("rsshub", self._src_rsshub))
-        for name, fn in sources:
-            try:
-                videos = await fn(username)
-                if videos:
-                    return videos, None
+                async with session.get(f"https://www.tiktok.com/@{username}", headers=headers, timeout=aiohttp.ClientTimeout(total=20)) as resp:
+                    text = await resp.text()
+                    print(f"[TikTok] Page len {len(text)} for @{username} - looking for secUid")
+                    
+                    # Extract secUid - even blocked page has it
+                    secuid_match = re.search(r'"secUid":"([^"]+)"', text)
+                    if secuid_match:
+                        secUid = secuid_match.group(1)
+                        print(f"[TikTok] Found secUid for @{username}: {secUid[:20]}...")
+                        
+                        # Step 2: Use secUid to get videos via TikTok API
+                        # This API is less blocked than main page
+                        api_headers = {
+                            "User-Agent": headers["User-Agent"],
+                            "Referer": f"https://www.tiktok.com/@{username}",
+                            "Accept": "application/json",
+                        }
+                        
+                        # Try multiple API endpoints with secUid
+                        api_urls = [
+                            f"https://www.tiktok.com/api/post/item_list/?aid=1988&app_language=en&app_name=tiktok_web&battery_info=1&browser_language=en-US&browser_name=Mozilla&browser_online=true&browser_platform=Win32&browser_version=5.0&channel=tiktok_web&cookie_enabled=true&count=1&cursor=0&device_brand=&device_id=0&device_model=&device_platform=web_pc&focus_state=false&from_page=user&history_len=2&is_fullscreen=false&is_page_visible=true&os=windows&priority_region=&referer=&region=US&screen_height=1080&screen_width=1920&secUid={secUid}&tz_name=America%2FNew_York&uniqueId={username}&webcast_language=en",
+                            f"https://m.tiktok.com/api/post/item_list/?aid=1988&count=1&cursor=0&secUid={secUid}&from_page=user&uniqueId={username}",
+                        ]
+                        
+                        for api_url in api_urls:
+                            try:
+                                async with session.get(api_url, headers=api_headers, timeout=aiohttp.ClientTimeout(total=15)) as api_resp:
+                                    print(f"[TikTok] API status {api_resp.status} for @{username} via secUid")
+                                    if api_resp.status == 200:
+                                        try:
+                                            data = await api_resp.json()
+                                            if "itemList" in data and data["itemList"]:
+                                                vid = str(data["itemList"][0].get("id", ""))
+                                                if vid and len(vid) >= 10:
+                                                    print(f"[TikTok] secUid API SUCCESS @{username}: {vid}")
+                                                    return vid, f"https://www.tiktok.com/@{username}/video/{vid}"
+                                            # Also try other formats
+                                            text_data = json.dumps(data)
+                                            vids = re.findall(r'"id"\s*:\s*"?\s*(\d{19})', text_data)
+                                            if vids:
+                                                print(f"[TikTok] secUid regex SUCCESS @{username}: {vids[0]}")
+                                                return vids[0], f"https://www.tiktok.com/@{username}/video/{vids[0]}"
+                                        except Exception as e:
+                                            print(f"[TikTok] secUid API JSON error: {e}")
+                                            # Try as text
+                                            try:
+                                                txt = await api_resp.text()
+                                                vids = re.findall(r'(\d{19})', txt)
+                                                for v in vids:
+                                                    if v.startswith('7') and len(v) == 19:
+                                                        print(f"[TikTok] secUid text SUCCESS @{username}: {v}")
+                                                        return v, f"https://www.tiktok.com/@{username}/video/{v}"
+                                            except:
+                                                pass
+                            except Exception as e:
+                                print(f"[TikTok] secUid API url error: {e}")
+                                continue
+                    
+                    # Fallback: Try to find video ID directly in page even if blocked
+                    # Sometimes page has video IDs even when SIGI_STATE is empty
+                    vids = re.findall(r'/video/(\d{19})', text)
+                    if vids:
+                        # Filter unique
+                        seen = []
+                        for v in vids:
+                            if v not in seen:
+                                seen.append(v)
+                        if seen:
+                            print(f"[TikTok] Direct page video SUCCESS @{username}: {seen[0]}")
+                            return seen[0], f"https://www.tiktok.com/@{username}/video/{seen[0]}"
+                    
+                    print(f"[TikTok] No secUid or video found in page for @{username}")
             except Exception as e:
-                msg = f"{name}: {e}"
-                errors.append(msg)
-                print(f"[TikTok] {username} -> {msg}")
-            await asyncio.sleep(1)
-        return None, " | ".join(errors)[:900]
- 
-    async def fetch_latest(self, username: str) -> tuple[dict | None, str | None]:
-        videos, err = await self.fetch_videos(username)
-        if not videos:
-            return None, err
-        return max(videos, key=lambda v: v.get("create_time", 0)), None
- 
-    # ---------- stats tracking ----------
-    def track(self, guild_id, username, channel_id, message_id, ping, video):
-        now = int(datetime.now(timezone.utc).timestamp())
-        g = self.data.setdefault(str(guild_id), {"accounts": {}})
-        g.setdefault("tracked", []).append({
-            "username": username,
-            "channel_id": channel_id,
-            "message_id": message_id,
-            "ping": ping,
-            "video": video,
-            "posted_at": now,
-            "last_update": now,
-        })
-        self.save()
- 
-    @tasks.loop(minutes=30)
-    async def update_loop(self):
-        now = int(datetime.now(timezone.utc).timestamp())
-        for gdata in list(self.data.values()):
-            keep = []
-            for t in gdata.get("tracked", []):
-                if now - t["posted_at"] > TRACK_DAYS * 86400:
-                    continue  # stop tracking old posts
-                if now - t["last_update"] < UPDATE_HOURS * 3600:
-                    keep.append(t)
-                    continue
- 
-                videos, err = await self.fetch_videos(t["username"])
-                await asyncio.sleep(2)
-                fresh = next(
-                    (v for v in (videos or []) if str(v["video_id"]) == str(t["video"]["video_id"])),
-                    None,
-                )
-                if fresh is None:
-                    # not found right now -> retry in about 1 hour
-                    t["last_update"] = now - UPDATE_HOURS * 3600 + 3600
-                    keep.append(t)
-                    continue
- 
-                # keep old title/cover if the source did not provide them
-                merged = {**t["video"], **{k: v for k, v in fresh.items() if v not in (None, "")}}
-                channel = self.bot.get_channel(t["channel_id"])
-                if channel is None:
-                    keep.append(t)
-                    continue
+                print(f"[TikTok] secUid page fetch error @{username}: {e}")
+            
+            # Method 2: Try TikTok webapp API without secUid
+            try:
+                print(f"[TikTok] Trying webapp API without secUid for @{username}")
+                api_url = f"https://www.tiktok.com/api/user/detail/?aid=1988&app_language=en&uniqueId={username}"
+                async with session.get(api_url, headers=headers, timeout=aiohttp.ClientTimeout(total=15)) as resp:
+                    print(f"[TikTok] user/detail status {resp.status} for @{username}")
+                    if resp.status == 200:
+                        try:
+                            data = await resp.json()
+                            text = json.dumps(data)
+                            # Extract secUid from here too
+                            sec_match = re.search(r'"secUid"\s*:\s*"([^"]+)"', text)
+                            if sec_match:
+                                secUid = sec_match.group(1)
+                                # Retry with secUid
+                                item_url = f"https://www.tiktok.com/api/post/item_list/?aid=1988&count=1&secUid={secUid}&from_page=user&uniqueId={username}"
+                                async with session.get(item_url, headers=headers, timeout=aiohttp.ClientTimeout(total=15)) as item_resp:
+                                    if item_resp.status == 200:
+                                        item_data = await item_resp.json()
+                                        if "itemList" in item_data and item_data["itemList"]:
+                                            vid = str(item_data["itemList"][0].get("id", ""))
+                                            if vid:
+                                                print(f"[TikTok] user/detail -> item_list SUCCESS @{username}: {vid}")
+                                                return vid, f"https://www.tiktok.com/@{username}/video/{vid}"
+                        except Exception as e:
+                            print(f"[TikTok] user/detail error: {e}")
+            except Exception as e:
+                print(f"[TikTok] user/detail fetch error: {e}")
+            
+            return None, None
+        except Exception as e:
+            print(f"[TikTok] secUid method error @{username}: {e}")
+            import traceback
+            traceback.print_exc()
+            return None, None
+
+    async def fetch_tiktok_info(self, username):
+        """Only latest video - secUid method, no Cloudflare, no yt-dlp"""
+        username = username.replace('@','').strip().lower()
+        if not username:
+            return None
+        session = await self.get_session()
+        display_name = username
+        last_video_id = "0"
+        last_video_url = f"https://www.tiktok.com/@{username}"
+        user_exists = False
+        
+        try:
+            url = f"https://www.tiktok.com/oembed?url=https://www.tiktok.com/@{username}"
+            async with session.get(url, headers={"User-Agent": "Mozilla/5.0"}, timeout=aiohttp.ClientTimeout(total=10)) as resp:
+                if resp.status == 200:
+                    data = await resp.json()
+                    if data.get("author_name"):
+                        display_name = data.get("author_name")
+                        user_exists = True
+                        print(f"[TikTok] oEmbed SUCCESS @{username}: {display_name}")
+        except Exception as e:
+            print(f"[TikTok] oEmbed error: {e}")
+
+        if not user_exists:
+            return None
+
+        # Try secUid API - bypasses block without Cloudflare
+        vid, vurl = await self.fetch_with_secuid_api(username, session)
+        if vid:
+            last_video_id = vid
+            last_video_url = vurl
+
+        print(f"[TikTok] FINAL @{username}: video={last_video_id}")
+        return {"username": username, "display_name": display_name, "last_video_id": last_video_id, "last_video_url": last_video_url}
+
+    @tasks.loop(minutes=2)
+    async def check_tiktok(self):
+        if not self.data["guilds"]:
+            return
+        for gid_str, gdata in list(self.data["guilds"].items()):
+            cid = gdata.get("channel_id")
+            if not cid:
+                continue
+            guild = self.bot.get_guild(int(gid_str))
+            if not guild:
+                continue
+            channel = guild.get_channel(cid)
+            if not channel:
+                continue
+            for uname, tracked in list(gdata.get("users", {}).items()):
                 try:
-                    await channel.get_partial_message(t["message_id"]).edit(
-                        view=TikTokView(t["username"], merged, t.get("ping")),
-                        allowed_mentions=discord.AllowedMentions.none(),
-                    )
-                    t["video"] = merged
-                    t["last_update"] = now
-                    keep.append(t)
-                    print(f"[TikTok] updated stats for @{t['username']} ({merged['video_id']})")
-                except discord.NotFound:
-                    pass  # message deleted -> drop it
-                except discord.HTTPException as e:
-                    print(f"[TikTok] edit error: {e}")
-                    keep.append(t)
-            gdata["tracked"] = keep
-        self.save()
- 
-    @update_loop.before_loop
-    async def before_update_loop(self):
+                    info = await self.fetch_tiktok_info(uname)
+                    if not info:
+                        continue
+                    old_vid = tracked.get("last_video_id", "0")
+                    new_vid = info.get("last_video_id", "0")
+                    print(f"[TikTok] Check @{uname}: old={old_vid} new={new_vid}")
+                    
+                    if new_vid != "0" and new_vid != old_vid:
+                        try:
+                            view = self.create_insane_clean_message(uname, info['display_name'], info['last_video_url'])
+                            if isinstance(view, tuple):
+                                v, embed = view
+                                if embed:
+                                    await channel.send(embed=embed, view=v)
+                                else:
+                                    await channel.send(view=v)
+                            else:
+                                await channel.send(view=view)
+                            print(f"[TikTok] SENT LATEST @{uname}: {new_vid}")
+                        except Exception as e:
+                            print(f"[TikTok] Send error: {e}")
+                    
+                    if new_vid != "0":
+                        self.data["guilds"][gid_str]["users"][uname]["last_video_id"] = new_vid
+                        self.data["guilds"][gid_str]["users"][uname]["last_check"] = datetime.now().isoformat()
+                        self.save_data()
+                    
+                    await asyncio.sleep(2)
+                except Exception as e:
+                    print(f"[TikTok] Loop error {uname}: {e}")
+                    continue
+
+    @check_tiktok.before_loop
+    async def before_check(self):
         await self.bot.wait_until_ready()
- 
-    # ---------- loop ----------
-    @tasks.loop(minutes=CHECK_MINUTES)
-    async def check_loop(self):
-        for guild_id, gdata in list(self.data.items()):
-            for username, info in list(gdata.get("accounts", {}).items()):
-                video, err = await self.fetch_latest(username)
-                await asyncio.sleep(2)
-                if not video:
-                    continue
- 
-                vid_id = str(video["video_id"])
-                if vid_id == info.get("last_id"):
-                    print(f"[TikTok] @{username}: no new video (latest {vid_id})")
-                    continue
-                if video.get("create_time", 0) <= info.get("last_time", 0):
-                    continue
- 
-                channel = self.bot.get_channel(info["channel_id"])
-                if channel is None:
-                    continue
- 
-                ping = role_mention(channel.guild.id, info["role_id"]) if info.get("role_id") else None
-                try:
-                    msg = await channel.send(
-                        view=TikTokView(username, video, ping),
-                        allowed_mentions=discord.AllowedMentions(everyone=True, roles=True),
-                    )
-                    self.track(channel.guild.id, username, channel.id, msg.id, ping, video)
-                    info["last_id"] = vid_id
-                    info["last_time"] = video.get("create_time", 0)
-                    self.save()
-                except discord.HTTPException as e:
-                    print(f"[TikTok] send error: {e}")
- 
-    @check_loop.before_loop
-    async def before_loop(self):
-        await self.bot.wait_until_ready()
- 
-    # ---------- commands ----------
-    group = app_commands.Group(
-        name="tiktok",
-        description="TikTok notifications",
-        default_permissions=discord.Permissions(manage_guild=True),
-        guild_only=True,
-    )
- 
-    @group.command(name="add", description="Add a TikTok account for notifications")
-    @app_commands.describe(
-        username="The TikTok username (without @)",
-        channel="Channel where notifications will be sent",
-        role="(Optional) Role to ping",
-        post_latest="Also post the current latest video right now",
-    )
-    async def add(
-        self,
-        interaction: discord.Interaction,
-        username: str,
-        channel: discord.TextChannel,
-        role: discord.Role | None = None,
-        post_latest: bool = False,
-    ):
-        await interaction.response.defer(ephemeral=True)
-        username = username.lstrip("@").strip().lower()
- 
-        video, err = await self.fetch_latest(username)
-        if video is None:
-            return await interaction.followup.send(
-                f"❌ Could not fetch **@{username}**.\n**Reason:** {err}"
-            )
- 
-        g = self.data.setdefault(str(interaction.guild_id), {"accounts": {}})
-        g["accounts"][username] = {
-            "channel_id": channel.id,
-            "role_id": role.id if role else None,
-            "last_id": str(video["video_id"]),
-            "last_time": video.get("create_time", 0),
-        }
-        self.save()
-        if post_latest:
-            ping = role_mention(interaction.guild_id, role.id) if role else None
-            msg = await channel.send(
-                view=TikTokView(username, video, ping),
-                allowed_mentions=discord.AllowedMentions(everyone=True, roles=True),
-            )
-            self.track(interaction.guild_id, username, channel.id, msg.id, ping, video)
-        await interaction.followup.send(
-            f"✅ I will post new TikToks from **@{username}** in {channel.mention}."
-        )
- 
-    @group.command(name="remove", description="Remove a TikTok account")
-    async def remove(self, interaction: discord.Interaction, username: str):
-        username = username.lstrip("@").strip().lower()
-        accounts = self.data.get(str(interaction.guild_id), {}).get("accounts", {})
-        if username in accounts:
-            del accounts[username]
-            self.save()
-            await interaction.response.send_message(f"🗑️ Removed **@{username}**.", ephemeral=True)
+        print("[TikTok] Ready - secUid API + Insane Clean - Latest only - No Cloudflare")
+
+    def cog_unload(self):
+        self.check_tiktok.cancel()
+        if self.session and not self.session.closed:
+            asyncio.create_task(self.session.close())
+
+    @commands.hybrid_group(name="tiktok", description="Manage TikTok notifications")
+    async def tiktok_group(self, ctx):
+        if ctx.invoked_subcommand is None:
+            try:
+                view = discord.ui.LayoutView()
+                container = discord.ui.Container()
+                container.add_item(discord.ui.TextDisplay(f"## {TIKTOK_EMOJI} TikTok"))
+                container.add_item(discord.ui.Separator(spacing=discord.SeparatorSpacing.small, divider=True))
+                container.add_item(discord.ui.TextDisplay("`/tiktok channel #channel`\n`/tiktok add @username`\n`/tiktok remove @username`\n`/tiktok list`"))
+                view.add_item(container)
+                await ctx.send(view=view, ephemeral=True)
+            except:
+                await ctx.send(f"{TIKTOK_EMOJI} TikTok", ephemeral=True)
+
+    @tiktok_group.command(name="channel", description="Set notification channel")
+    @app_commands.describe(channel="Channel for TikTok alerts")
+    async def set_channel(self, ctx, channel: discord.TextChannel):
+        guild_data = self.get_guild_data(ctx.guild.id)
+        guild_data["channel_id"] = channel.id
+        self.save_data()
+        try:
+            view = discord.ui.LayoutView()
+            container = discord.ui.Container()
+            container.add_item(discord.ui.TextDisplay(f"## {TIKTOK_EMOJI} Channel Set"))
+            container.add_item(discord.ui.Separator(spacing=discord.SeparatorSpacing.small, divider=True))
+            container.add_item(discord.ui.TextDisplay(f"→ {channel.mention}"))
+            view.add_item(container)
+            await ctx.send(view=view, ephemeral=True)
+        except:
+            await ctx.send(f"Channel set to {channel.mention}", ephemeral=True)
+
+    @tiktok_group.command(name="add", description="Add a TikTok creator")
+    @app_commands.describe(username="TikTok username")
+    async def add_user(self, ctx, username: str):
+        try:
+            await ctx.defer(ephemeral=True)
+            deferred = True
+        except:
+            deferred = False
+        clean_name = username.replace('@','').strip().lower()
+        guild_data = self.get_guild_data(ctx.guild.id)
+        if len(guild_data["users"]) >= 25:
+            msg = "Max 25 creators"
+            if deferred:
+                try: await ctx.followup.send(msg, ephemeral=True)
+                except: await ctx.send(msg, ephemeral=True)
+            else: await ctx.send(msg, ephemeral=True)
+            return
+        if clean_name.lower() in [u.lower() for u in guild_data["users"].keys()]:
+            msg = f"@{clean_name} already tracked"
+            if deferred:
+                try: await ctx.followup.send(msg, ephemeral=True)
+                except: await ctx.send(msg, ephemeral=True)
+            else: await ctx.send(msg, ephemeral=True)
+            return
+        if not guild_data.get("channel_id"):
+            msg = "Set channel first: /tiktok channel #channel"
+            if deferred:
+                try: await ctx.followup.send(msg, ephemeral=True)
+                except: await ctx.send(msg, ephemeral=True)
+            else: await ctx.send(msg, ephemeral=True)
+            return
+        try:
+            info = await asyncio.wait_for(self.fetch_tiktok_info(clean_name), timeout=40)
+        except:
+            info = None
+        
+        guild_data["users"][clean_name] = {"last_video_id": info.get("last_video_id") or "0" if info else "0", "added_by": ctx.author.id, "added_at": datetime.now().isoformat(), "last_check": datetime.now().isoformat()}
+        self.save_data()
+        
+        try:
+            view = discord.ui.LayoutView()
+            container = discord.ui.Container()
+            container.add_item(discord.ui.TextDisplay(f"## {TIKTOK_EMOJI} Tracking @{clean_name}"))
+            container.add_item(discord.ui.Separator(spacing=discord.SeparatorSpacing.small, divider=True))
+            if info and info.get("last_video_id") != "0":
+                container.add_item(discord.ui.TextDisplay(f"Latest: `{info.get('last_video_id')[:10]}...`\nOnly latest will be sent"))
+            else:
+                container.add_item(discord.ui.TextDisplay(f"Watching for uploads\nOnly latest video will be sent"))
+            container.add_item(discord.ui.Separator(spacing=discord.SeparatorSpacing.small, divider=False))
+            action_row = discord.ui.ActionRow()
+            action_row.add_item(discord.ui.Button(label="Profile", style=discord.ButtonStyle.link, url=f"https://www.tiktok.com/@{clean_name}"))
+            container.add_item(action_row)
+            view.add_item(container)
+            if deferred:
+                try: await ctx.followup.send(view=view, ephemeral=True)
+                except: await ctx.send(view=view, ephemeral=True)
+            else: await ctx.send(view=view, ephemeral=True)
+        except:
+            if deferred:
+                try: await ctx.followup.send(f"Tracking @{clean_name}", ephemeral=True)
+                except: await ctx.send(f"Tracking @{clean_name}", ephemeral=True)
+            else: await ctx.send(f"Tracking @{clean_name}", ephemeral=True)
+
+    @tiktok_group.command(name="remove", description="Remove a tracked creator")
+    @app_commands.describe(username="Username to remove")
+    async def remove_user(self, ctx, username: str):
+        clean_name = username.replace('@','').strip().lower()
+        guild_data = self.get_guild_data(ctx.guild.id)
+        found = None
+        for key in guild_data["users"].keys():
+            if key.lower() == clean_name.lower():
+                found = key
+                break
+        if not found:
+            return await ctx.send(f"@{clean_name} not tracked.", ephemeral=True)
+        del guild_data["users"][found]
+        self.save_data()
+        await ctx.send(f"Removed @{found}", ephemeral=True)
+
+    @tiktok_group.command(name="list", description="View tracked creators")
+    async def list_users(self, ctx):
+        guild_data = self.get_guild_data(ctx.guild.id)
+        users = guild_data.get("users", {})
+        if not users:
+            try:
+                view = discord.ui.LayoutView()
+                container = discord.ui.Container()
+                container.add_item(discord.ui.TextDisplay(f"## {TIKTOK_EMOJI} Tracked"))
+                container.add_item(discord.ui.Separator(spacing=discord.SeparatorSpacing.small, divider=True))
+                container.add_item(discord.ui.TextDisplay("No creators yet."))
+                view.add_item(container)
+                await ctx.send(view=view, ephemeral=True)
+            except:
+                await ctx.send("No creators tracked.", ephemeral=True)
+            return
+        
+        try:
+            view = discord.ui.LayoutView()
+            container = discord.ui.Container()
+            container.add_item(discord.ui.TextDisplay(f"## {TIKTOK_EMOJI} Tracked ({len(users)})"))
+            container.add_item(discord.ui.Separator(spacing=discord.SeparatorSpacing.small, divider=True))
+            desc = ""
+            for i, (u, data) in enumerate(users.items(), 1):
+                vid = data.get("last_video_id", "0")
+                status = "watching" if vid == "0" else "active"
+                desc += f"`{i}.` **@{u}** • {status}\n"
+            container.add_item(discord.ui.TextDisplay(desc))
+            view.add_item(container)
+            await ctx.send(view=view, ephemeral=True)
+        except:
+            await ctx.send(f"Tracked: {', '.join(users.keys())}", ephemeral=True)
+
+    @tiktok_group.command(name="debug", description="Debug TikTok API")
+    @app_commands.describe(username="Username to debug")
+    async def debug_user(self, ctx, username: str):
+        await ctx.defer(ephemeral=True)
+        clean_name = username.replace('@','').strip()
+        info = await self.fetch_tiktok_info(clean_name)
+        if info:
+            try:
+                view = discord.ui.LayoutView()
+                container = discord.ui.Container()
+                container.add_item(discord.ui.TextDisplay(f"## {TIKTOK_EMOJI} @{info['username']}"))
+                container.add_item(discord.ui.Separator(spacing=discord.SeparatorSpacing.small, divider=True))
+                has_vid = "latest only" if info['last_video_id'] != "0" else "no videos - blocked"
+                container.add_item(discord.ui.TextDisplay(f"**{info['display_name']}**\nID: `{info['last_video_id']}`\n{has_vid}"))
+                container.add_item(discord.ui.Separator(spacing=discord.SeparatorSpacing.small, divider=False))
+                action_row = discord.ui.ActionRow()
+                action_row.add_item(discord.ui.Button(label="Profile", style=discord.ButtonStyle.link, url=f"https://www.tiktok.com/@{info['username']}"))
+                if info['last_video_id'] != "0":
+                    action_row.add_item(discord.ui.Button(label="Watch", style=discord.ButtonStyle.link, url=info['last_video_url']))
+                container.add_item(action_row)
+                view.add_item(container)
+                await ctx.followup.send(view=view, ephemeral=True)
+            except:
+                await ctx.followup.send(f"@{info['username']}: {info['last_video_id']}", ephemeral=True)
         else:
-            await interaction.response.send_message("❌ That account is not being tracked.", ephemeral=True)
- 
-    @group.command(name="list", description="List tracked TikTok accounts")
-    async def list_accounts(self, interaction: discord.Interaction):
-        accounts = self.data.get(str(interaction.guild_id), {}).get("accounts", {})
-        if not accounts:
-            return await interaction.response.send_message("No accounts are being tracked.", ephemeral=True)
-        lines = [f"• **@{u}** → <#{i['channel_id']}>" for u, i in accounts.items()]
-        await interaction.response.send_message("\n".join(lines), ephemeral=True)
- 
-    @group.command(name="test", description="Send a test notification")
-    async def test(self, interaction: discord.Interaction, username: str):
-        await interaction.response.defer(ephemeral=True)
-        username = username.lstrip("@").strip().lower()
-        video, err = await self.fetch_latest(username)
-        if not video:
-            return await interaction.followup.send(f"❌ Failed.\n**Reason:** {err}")
-        await interaction.channel.send(view=TikTokView(username, video))
-        await interaction.followup.send("✅ Sent.")
- 
- 
-async def setup(bot: commands.Bot):
-    await bot.add_cog(TikTok(bot))
- 
+            await ctx.followup.send(f"Could not find @{clean_name}", ephemeral=True)
+
+async def setup(bot):
+    for cmd in ['tiktok']:
+        if bot.get_command(cmd): bot.remove_command(cmd)
+        try: bot.tree.remove_command(cmd)
+        except: pass
+    await bot.add_cog(TikTokNotify(bot))
