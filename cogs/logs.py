@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 from discord import app_commands
-from utils.helpers import load_config, save_config
+from helpers import load_config, save_config
 import datetime
 
 NO_PING = discord.AllowedMentions.none()
